@@ -9,8 +9,74 @@ import {Button} from "reactstrap";
 
 class QuestionSubmissionHub extends Component {
 
+    state={
+
+        options:[],
+        optioncnt:0,
+        optionForm:[]
+    }
+
+    optionOnChangeHandler = (i,event)=>{
+
+        let optionTemp = Object.assign({},this.state)
+
+        console.log(i,event)
+        console.log(optionTemp)
+        optionTemp.options[i]=optionTemp.options[i] + event.target.value
+  
+
+        this.setState({state:optionTemp})
+
+    }
+
+    addOptionHandler = ()=>{
+        
+        let data=[]
+        let TempOptions = []
+        for(let i=0;i<this.state.optioncnt+1;i++)
+        {
+          let op = "option" + (i+1)
+          let val=""
+          if(this.state.options[i]!=null)
+          {
+            val=this.state.options[i]
+          }
+          console.log(i)
+          data.push( 
+            <FormGroup key={i}>
+            <Label for={op}>OPTION+{i+1}</Label>
+            <Input
+              type="text"
+              name="option"
+              id={op}
+              placeholder={op}
+              value = {this.state.options[i]}
+              onChange ={(event)=>this.optionOnChangeHandler(i,event)}
+            />
+            </FormGroup>
+            )
+          TempOptions.push("")
+        }
+        
+        this.setState({optioncnt:this.state.optioncnt+1,optionForm:data,options:TempOptions},()=>{console.log(this.state.optioncnt,this.state.optionForm)})
+          
+        
+    }
+
+  
+
     render(){
 
+      let op = []
+      op.push(<FormGroup>
+        <Label for="question">Question</Label>
+        <Input
+          type="text"
+          name="question"
+          id="question"
+          placeholder="Enter Question"
+        />
+        </FormGroup>)
 
     return(
     <Card style={{margin:'20px'}}>
@@ -18,54 +84,19 @@ class QuestionSubmissionHub extends Component {
     <CardBody>
         <CardTitle>Enter A Question</CardTitle>
         <form>
-      <FormGroup>
-        <Label for="exampleEmail">Enter Question Here</Label>
-        <Input
-          type="textArea"
-          name="Question"
-          id="Question"
-          placeholder="Enter Question"
-        />
-      </FormGroup>
-      <FormGroup>
-        <Label for="option1">OPTION 1</Label>
-        <Input
-          type="text"
-          name="option1"
-          id="option1"
-          placeholder="option1"
-        />
-      </FormGroup>
-      <FormGroup>
-        <Label for="option2">OPTION 2</Label>
-        <Input
-          type="text"
-          name="option2"
-          id="option2"
-          placeholder="option2"
-        />
-      </FormGroup>
-      <FormGroup>
-        <Label for="option3">OPTION 3</Label>
-        <Input
-          type="text"
-          name="option3"
-          id="option3"
-          placeholder="option3"
-        />
-      </FormGroup>
-      <FormGroup>
-        <Label for="option4">OPTION 4</Label>
-        <Input
-          type="text"
-          name="option4"
-          id="option4"
-          placeholder="option4"
-        />
-      </FormGroup>
-     
-      <Button color="primary" type="submit">
-        Submit
+        <FormGroup>
+            <Label for="question">Question</Label>
+            <Input
+              type="text"
+              name="question"
+              id="question"
+              placeholder="Enter Question"
+            />
+            </FormGroup>
+          {this.state.optionForm}
+          
+      <Button color="primary" onClick={this.addOptionHandler}>
+        Add Options
       </Button>
     </form>
     </CardBody>
