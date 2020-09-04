@@ -1,110 +1,132 @@
-import React,{Component} from 'react'
-import { Card, CardHeader, CardBody, CardTitle} from 'reactstrap';
-import {
-    FormGroup,
-    Label,
-    Input,
-  } from "reactstrap";
-import {Button} from "reactstrap";
+import React, { Component } from "react";
+import { Card, CardHeader, CardBody, CardTitle, Col, Row } from "reactstrap";
+import { FormGroup, Label, Input } from "reactstrap";
+import { Button } from "reactstrap";
 
 class QuestionSubmissionHub extends Component {
-
-    state={
-
-        options:[],
-        optioncnt:0,
-        optionForm:[]
+    constructor(props) {
+        super(props);
+        this.state = {
+            nOptions: 0,
+            options: [],
+            optioncnt: 0,
+            optionForm: [],
+            correctAns: -1,
+            update: false,
+        };
     }
 
-    optionOnChangeHandler = (i,event)=>{
+    optionOnChangeHandler = (i, event) => {
+        let options = this.state.options;
+        options[i].value = event.target.value;
 
-        let optionTemp = Object.assign({},this.state)
+        this.setState({ options: options, update: true });
+    };
 
-        console.log(i,event)
-        console.log(optionTemp)
-        optionTemp.options[i]=optionTemp.options[i] + event.target.value
-  
-
-        this.setState({state:optionTemp})
-
+    addOptionHandler(e) {
+        this.setState((prevState) => {
+            let options = this.state.options;
+            options.push({
+                value: "",
+            });
+            return {
+                nOptions: prevState.nOptions + 1,
+                options: options,
+                update: true,
+            };
+        });
     }
 
-    addOptionHandler = ()=>{
-        
-        let data=[]
-        let TempOptions = []
-        for(let i=0;i<this.state.optioncnt+1;i++)
-        {
-          let op = "option" + (i+1)
-          let val=""
-          if(this.state.options[i]!=null)
-          {
-            val=this.state.options[i]
-          }
-          console.log(i)
-          data.push( 
-            <FormGroup key={i}>
-            <Label for={op}>OPTION+{i+1}</Label>
-            <Input
-              type="text"
-              name="option"
-              id={op}
-              placeholder={op}
-              value = {this.state.options[i]}
-              onChange ={(event)=>this.optionOnChangeHandler(i,event)}
-            />
-            </FormGroup>
-            )
-          TempOptions.push("")
+    componentDidUpdate() {
+        let data = [];
+        if (this.state.update) {
+            for (let i = 0; i < this.state.nOptions; i++) {
+                data.push(
+                    <FormGroup key={i}>
+                        <Label
+                            style={{
+                                width: "7%",
+                                marginLeft: 0,
+                                marginRight: 0,
+                                textAlign: "center",
+                            }}
+                            for={"option"}
+                        >
+                            OPTION {i + 1}
+                        </Label>
+
+                        <Input
+                            type="text"
+                            name="option"
+                            id={"option-" + (i + 1)}
+                            placeholder={`Option - ${i + 1}`}
+                            value={this.state.options[i].value}
+                            onChange={(event) => this.optionOnChangeHandler(i, event)}
+                            style={{
+                                width: "75%",
+                                display: "inline",
+                                marginLeft: 0,
+                                marginRight: 0,
+                            }}
+                        />
+                        <Button
+                            color={this.state.correctAns == i ? "success" : ""}
+                            style={{
+                                paddingLeft: 10,
+                                display: "inline",
+                                marginBottom: 13,
+                                marginLeft: 0,
+                                marginRight: 0,
+                                width: "18%",
+                            }}
+                            onClick={(e) => {
+                                this.setState({ correctAns: i, update: true });
+                            }}
+                        >
+                            {this.state.correctAns == i
+                                ? "Correct Answer"
+                                : "Select Correct Answer"}
+                        </Button>
+                    </FormGroup>,
+                );
+            }
+            this.setState({ optionForm: data, update: false });
         }
-        
-        this.setState({optioncnt:this.state.optioncnt+1,optionForm:data,options:TempOptions},()=>{console.log(this.state.optioncnt,this.state.optionForm)})
-          
-        
     }
 
-  
+    render() {
+        let op = [];
+        op.push(
+            <FormGroup>
+                <Label for="question">Question</Label>
+                <Input type="text" name="question" id="question" placeholder="Enter Question" />
+            </FormGroup>,
+        );
 
-    render(){
+        return (
+            <Card style={{ margin: "20px" }}>
+                <CardBody>
+                    <CardTitle>Enter A Question</CardTitle>
+                    <form>
+                        <FormGroup>
+                            <Label for="question">Question</Label>
+                            <Input
+                                type="text"
+                                name="question"
+                                id="question"
+                                placeholder="Enter Question"
+                            />
+                        </FormGroup>
+                        {this.state.optionForm}
 
-      let op = []
-      op.push(<FormGroup>
-        <Label for="question">Question</Label>
-        <Input
-          type="text"
-          name="question"
-          id="question"
-          placeholder="Enter Question"
-        />
-        </FormGroup>)
-
-    return(
-    <Card style={{margin:'20px'}}>
-    <CardHeader>Problem Setters</CardHeader>
-    <CardBody>
-        <CardTitle>Enter A Question</CardTitle>
-        <form>
-        <FormGroup>
-            <Label for="question">Question</Label>
-            <Input
-              type="text"
-              name="question"
-              id="question"
-              placeholder="Enter Question"
-            />
-            </FormGroup>
-          {this.state.optionForm}
-          
-      <Button color="primary" onClick={this.addOptionHandler}>
-        Add Options
-      </Button>
-    </form>
-    </CardBody>
-</Card>
-    )
-
+                        <Button color="primary" onClick={(e) => this.addOptionHandler(e)}>
+                            Add Options
+                        </Button>
+                    </form>
+                </CardBody>
+            </Card>
+        );
     }
-
 }
 
-export default QuestionSubmissionHub
+export default QuestionSubmissionHub;
