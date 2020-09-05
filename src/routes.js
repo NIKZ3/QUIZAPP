@@ -18,6 +18,8 @@
 
 */
 import Questions from "views/Questions.js";
+import Exam from "views/Exam.js";
+
 import Dashboard from "views/Dashboard.js";
 import Notifications from "views/Notifications.js";
 import Icons from "views/Icons.js";
@@ -33,6 +35,13 @@ var routes = [
         name: "Problem Setters",
         icon: "nc-icon nc-preferences-circle-rotate",
         component: Questions,
+        layout: "/admin",
+    },
+    {
+        path: "/exam",
+        name: "Exam",
+        icon: "nc-icon nc-preferences-circle-rotate",
+        component: Exam,
         layout: "/admin",
     },
     {
