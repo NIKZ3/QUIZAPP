@@ -16,6 +16,19 @@ class QuestionSubmissionHub extends Component {
         };
     }
 
+  /******NOTE: Submit button will directly send the Question to Backend *********/
+  //TODO: Add Axios Request to SUbmit the answer
+    onSubmitHandler = ()=>{
+
+      if(this.state.correctAns===-1)
+      {
+        alert("Please Select Correct Answer")
+      }
+      
+
+
+    }
+
     optionOnChangeHandler = (i, event) => {
         let options = this.state.options;
         options[i].value = event.target.value;
@@ -104,6 +117,7 @@ class QuestionSubmissionHub extends Component {
         );
 
         return (
+          <React.Fragment>
             <Card style={{ margin: "20px" }}>
                 <CardBody>
                     <CardTitle>Enter A Question</CardTitle>
@@ -125,6 +139,8 @@ class QuestionSubmissionHub extends Component {
                     </form>
                 </CardBody>
             </Card>
+            <Button onClick={this.onSubmitHandler} style={{margin: "20px"}} color="primary">SUBMIT QUESTION</Button>
+          </React.Fragment>
         );
     }
 }
