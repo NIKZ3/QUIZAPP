@@ -28,6 +28,7 @@ import "perfect-scrollbar/css/perfect-scrollbar.css";
 
 import AdminLayout from "layouts/Admin.js";
 import QuestionSubmissionHub from "./Containers/QuestionSubmissionHub/QuestionSubmissionHub"
+import Admin from './Containers/AdminHub/AdminTestSchedule'
 
 const hist = createBrowserHistory();
 
@@ -36,6 +37,8 @@ ReactDOM.render(
     <Switch>
       <Route path="/admin" render={(props) => <AdminLayout {...props} />} />
       <Route path="/QuestionHub" component={QuestionSubmissionHub} />
+      <Route path="/adminHub" component={Admin} />
+
       <Redirect to="/admin/dashboard" />
     </Switch>
   </Router>,

@@ -26,6 +26,10 @@ import TableList from "views/Tables.js";
 import Maps from "views/Map.js";
 import UserPage from "views/User.js";
 import UpgradeToPro from "views/Upgrade.js";
+import AdminTestSchedule from "./views/AdminTestSchedule";
+import AdminLogin from "./views/AdminLogin";
+import UserLogin from "./views/UserLogin";
+import AdminResult from "./views/AdminResult";
 
 var routes = [
     {
@@ -33,6 +37,34 @@ var routes = [
         name: "Problem Setters",
         icon: "nc-icon nc-preferences-circle-rotate",
         component: Questions,
+        layout: "/admin",
+    },
+    {
+        path: "/admin/result",
+        name: "Result",
+        icon: "nc-icon nc-preferences-circle-rotate",
+        component: AdminResult,
+        layout: "/admin",
+    },
+    {
+        path: "/admin/login",
+        name: "AdminLogin",
+        icon: "nc-icon nc-preferences-circle-rotate",
+        component: AdminLogin,
+        layout: "/admin",
+    },
+    {
+        path: "/user/login",
+        name: "UserLogin",
+        icon: "nc-icon nc-preferences-circle-rotate",
+        component: UserLogin,
+        layout: "/admin",
+    },
+    {
+        path: "/admin/schedule",
+        name: "adminschedule",
+        icon: "nc-icon nc-preferences-circle-rotate",
+        component: AdminTestSchedule,
         layout: "/admin",
     },
     {
