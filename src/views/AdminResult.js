@@ -4,9 +4,9 @@ import Result from "../Containers/AdminHub/Result";
 class AdminResult extends Component {
     render() {
         return (
-            <React.Fragment>
+            <div className="content">
                 <Result />
-            </React.Fragment>
+            </div>
         );
     }
 }

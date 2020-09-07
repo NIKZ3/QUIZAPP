@@ -1,7 +1,8 @@
 import React from "react";
 import McqCard from "components/mcq-card";
 import { Button, Col } from "reactstrap";
-import axios from "../axios";
+import axios from "axios";
+//axios.defaults.withCredentials = true;
 // reactstrap components
 
 class Exam extends React.Component {
@@ -130,37 +131,48 @@ class Exam extends React.Component {
     }
 
     componentDidMount() {
-        axios.get("/user/questions").then((response) => {
-            const data = response.data;
-            alert("Please note down the sessionID:" + data.sessionID); //!SessionID
-            const tempState = {};
-            tempState.questions = data.questions;
-            tempState.nQuestions = data.nQuestions;
-            tempState.qCount = 1;
-            tempState.time = 15;
-            tempState.answers = {};
+        // console.log(this.props);
+        axios
+            .get("http://localhost:3001/user/questions", {
+                headers: {
+                    authorization: localStorage.getItem("token"),
+                },
+            })
+            .then((response) => {
+                const data = response.data;
+                alert("Please note down the sessionID:" + data.sessionID); //!SessionID
+                const tempState = {};
+                tempState.questions = data.questions;
+                tempState.nQuestions = data.nQuestions;
+                tempState.qCount = 1;
+                tempState.time = 15;
+                tempState.answers = {};
 
-            for (let i = 0; i < tempState.nQuestions; i++) {
-                let _id = tempState.questions[i]._id;
-                tempState.answers[_id] = -1;
-            }
-
-            this.setState(tempState, () => {
-                console.log(this.state);
-                for (let i = 1; i <= this.state.nQuestions; i++) {
-                    this.questionButtons.push(
-                        <Button
-                            className="mr-1 bg-primary"
-                            onClick={(e) => {
-                                this.changeQCount(i);
-                            }}
-                        >
-                            {i}
-                        </Button>
-                    );
+                for (let i = 0; i < tempState.nQuestions; i++) {
+                    let _id = tempState.questions[i]._id;
+                    tempState.answers[_id] = -1;
                 }
+
+                this.setState(tempState, () => {
+                    console.log(this.state);
+                    for (let i = 1; i <= this.state.nQuestions; i++) {
+                        this.questionButtons.push(
+                            <Button
+                                className="mr-1 bg-primary"
+                                onClick={(e) => {
+                                    this.changeQCount(i);
+                                }}
+                            >
+                                {i}
+                            </Button>
+                        );
+                    }
+                });
+            })
+            .catch((e) => {
+                alert("You might not be logged in");
+                this.props.history.replace("/login");
             });
-        });
     }
 
     componentDidUpdate() {
@@ -170,16 +182,23 @@ class Exam extends React.Component {
             // TODO: Submit automatically
 
             axios
-                .post("/user/submit", {
-                    answers: this.state.answers,
-                })
+                .post(
+                    "http://localhost:3001/user/submit",
+                    { answers: this.state.answers },
+                    {
+                        headers: {
+                            authorization: localStorage.getItem("token"),
+                        },
+                    }
+                )
                 .then((response) => {
-                    console.log(response);
-                    console.log("Sucessfully submitted");
+                    alert("Submission Success");
+                    localStorage.clear();
+                    this.props.history.replace("/admin/login");
                 })
                 .catch((e) => {
                     console.log(e);
-                    alert("Something went wrong");
+                    alert("Submission Failed");
                 });
         }
     }
