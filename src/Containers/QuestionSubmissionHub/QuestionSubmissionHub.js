@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { Card, CardHeader, CardBody, CardTitle, Col, Row } from "reactstrap";
 import { FormGroup, Label, Input } from "reactstrap";
 import { Button } from "reactstrap";
-import axios from "../../axios";
+import axios from "axios";
 
 class QuestionSubmissionHub extends Component {
     constructor(props) {
@@ -25,11 +25,19 @@ class QuestionSubmissionHub extends Component {
             alert("Please Select Correct Answer");
         } else {
             axios
-                .post("/admin/submitQuestion", {
-                    question: this.state.question,
-                    options: this.state.options,
-                    ans: this.state.correctAns,
-                })
+                .post(
+                    "http://localhost:3001/admin/submitQuestion",
+                    {
+                        question: this.state.question,
+                        options: this.state.options,
+                        ans: this.state.correctAns,
+                    },
+                    {
+                        headers: {
+                            authorization: localStorage.getItem("token"),
+                        },
+                    }
+                )
                 .then((response) => {
                     alert("Question submitted successfully");
 
