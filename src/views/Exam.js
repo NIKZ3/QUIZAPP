@@ -1,7 +1,7 @@
 import React from "react";
 import McqCard from "components/mcq-card";
 import { Button, Col } from "reactstrap";
-import axios from "axios";
+import axios from "../axios";
 // reactstrap components
 
 class Exam extends React.Component {
@@ -130,7 +130,7 @@ class Exam extends React.Component {
     }
 
     componentDidMount() {
-        axios.get("http://localhost:3001/user/questions").then((response) => {
+        axios.get("/user/questions").then((response) => {
             const data = response.data;
             alert("Please note down the sessionID:" + data.sessionID); //!SessionID
             const tempState = {};
@@ -165,11 +165,12 @@ class Exam extends React.Component {
 
     componentDidUpdate() {
         if (this.state.time === 0) {
+            this.setState({ time: -1 });
             clearInterval(this.timerHandler);
             // TODO: Submit automatically
 
             axios
-                .post("http://localhost:3001/user/submit", {
+                .post("/user/submit", {
                     answers: this.state.answers,
                 })
                 .then((response) => {
@@ -186,12 +187,12 @@ class Exam extends React.Component {
     render() {
         let _id = this.state.questions[this.state.qCount - 1]._id;
 
+        //
         return (
             <>
                 <div className="content">
                     <div>
                         <h5>
-                            Time Remaining -{" "}
                             <span
                                 className={
                                     this.state.time < 60
