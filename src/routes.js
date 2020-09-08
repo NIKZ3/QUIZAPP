@@ -24,8 +24,16 @@ import AdminTestSchedule from "./views/AdminTestSchedule";
 import AdminLogin from "./views/AdminLogin";
 
 import AdminResult from "./views/AdminResult";
+import SessionActivation from "./views/SessionActivation";
 
 var routes = [
+    {
+        path: "/sessionActivation",
+        name: "SessionActivation",
+        icon: "nc-icon nc-preferences-circle-rotate",
+        component: SessionActivation,
+        layout: "/admin",
+    },
     {
         path: "/exam",
         name: "Exam",

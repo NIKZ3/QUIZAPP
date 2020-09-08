@@ -94,11 +94,16 @@ class Exam extends React.Component {
         });
 
         this.timerHandler = setInterval(() => {
-            this.setState((prevState) => {
-                return {
-                    time: prevState.time - 1,
-                };
-            });
+            this.setState(
+                (prevState) => {
+                    return {
+                        time: prevState.time - 1,
+                    };
+                },
+                () => {
+                    localStorage.setItem("state", JSON.stringify(this.state));
+                }
+            );
         }, 1000);
 
         this.handleOptions = this.handleOptions.bind(this);
@@ -115,7 +120,9 @@ class Exam extends React.Component {
         let options = this.state.answers;
         options[_id] = optId;
         console.log();
-        this.setState({ answers: options }, console.log(this.state));
+        this.setState({ answers: options }, () => {
+            localStorage.setItem("state", JSON.stringify(this.state));
+        });
     }
     handleButtonClick(itr) {
         this.setState((prevState) => {
@@ -130,49 +137,105 @@ class Exam extends React.Component {
         });
     }
 
-    componentDidMount() {
-        // console.log(this.props);
+    functionSetInitialState = (tempState) => {
+        this.setState(tempState, () => {
+            console.log("This no request", tempState);
+
+            console.log(tempState);
+            for (let i = 1; i <= this.state.nQuestions; i++) {
+                this.questionButtons.push(
+                    <Button
+                        className="mr-1 bg-primary"
+                        onClick={(e) => {
+                            this.changeQCount(i);
+                        }}
+                    >
+                        {i}
+                    </Button>
+                );
+            }
+        });
+    };
+
+    functionSubmit = () => {
         axios
-            .get("http://localhost:3001/user/questions", {
-                headers: {
-                    authorization: localStorage.getItem("token"),
-                },
-            })
-            .then((response) => {
-                const data = response.data;
-                alert("Please note down the sessionID:" + data.sessionID); //!SessionID
-                const tempState = {};
-                tempState.questions = data.questions;
-                tempState.nQuestions = data.nQuestions;
-                tempState.qCount = 1;
-                tempState.time = 15;
-                tempState.answers = {};
-
-                for (let i = 0; i < tempState.nQuestions; i++) {
-                    let _id = tempState.questions[i]._id;
-                    tempState.answers[_id] = -1;
+            .post(
+                "http://localhost:3001/user/submit",
+                { answers: this.state.answers },
+                {
+                    headers: {
+                        authorization: localStorage.getItem("token"),
+                    },
                 }
-
-                this.setState(tempState, () => {
-                    console.log(this.state);
-                    for (let i = 1; i <= this.state.nQuestions; i++) {
-                        this.questionButtons.push(
-                            <Button
-                                className="mr-1 bg-primary"
-                                onClick={(e) => {
-                                    this.changeQCount(i);
-                                }}
-                            >
-                                {i}
-                            </Button>
-                        );
-                    }
-                });
+            )
+            .then((response) => {
+                alert("Submission Success");
+                localStorage.clear();
+                this.props.history.replace("/admin/login");
             })
             .catch((e) => {
-                alert("You might not be logged in");
-                this.props.history.replace("/login");
+                console.log(e);
+                alert("Submission Failed");
             });
+    };
+
+    //
+    componentDidMount() {
+        // console.log(this.props);
+        if (localStorage.getItem("state") !== null) {
+            //When user refreshes if he already has questions no need for backend request
+            this.functionSetInitialState(
+                JSON.parse(localStorage.getItem("state"))
+            );
+        } else {
+            axios
+                .get("http://localhost:3001/user/questions", {
+                    headers: {
+                        authorization: localStorage.getItem("token"),
+                    },
+                })
+                .then((response) => {
+                    const data = response.data;
+                    alert("Please note down the sessionID:" + data.sessionID); //!SessionID
+                    const tempState = {};
+                    tempState.questions = data.questions;
+                    tempState.nQuestions = data.nQuestions;
+                    tempState.qCount = 1;
+                    tempState.time = 50;
+                    tempState.answers = {};
+
+                    for (let i = 0; i < tempState.nQuestions; i++) {
+                        let _id = tempState.questions[i]._id;
+                        tempState.answers[_id] = -1;
+                    }
+
+                    this.setState(tempState, () => {
+                        localStorage.setItem(
+                            "state",
+                            JSON.stringify(this.state)
+                        );
+
+                        console.log("This is initial request");
+
+                        for (let i = 1; i <= this.state.nQuestions; i++) {
+                            this.questionButtons.push(
+                                <Button
+                                    className="mr-1 bg-primary"
+                                    onClick={(e) => {
+                                        this.changeQCount(i);
+                                    }}
+                                >
+                                    {i}
+                                </Button>
+                            );
+                        }
+                    });
+                })
+                .catch((e) => {
+                    alert("You might not be logged in");
+                    this.props.history.replace("/login");
+                });
+        }
     }
 
     componentDidUpdate() {
@@ -181,25 +244,7 @@ class Exam extends React.Component {
             clearInterval(this.timerHandler);
             // TODO: Submit automatically
 
-            axios
-                .post(
-                    "http://localhost:3001/user/submit",
-                    { answers: this.state.answers },
-                    {
-                        headers: {
-                            authorization: localStorage.getItem("token"),
-                        },
-                    }
-                )
-                .then((response) => {
-                    alert("Submission Success");
-                    localStorage.clear();
-                    this.props.history.replace("/admin/login");
-                })
-                .catch((e) => {
-                    console.log(e);
-                    alert("Submission Failed");
-                });
+            this.functionSubmit();
         }
     }
 
@@ -272,6 +317,15 @@ class Exam extends React.Component {
                             </Button>
                         </span>
                     </div>
+                    <Button
+                        className="bg-primary ml-2"
+                        style={{ width: 120 }}
+                        onClick={(e) => {
+                            this.functionSubmit();
+                        }}
+                    >
+                        Submit
+                    </Button>
                 </div>
             </>
         );

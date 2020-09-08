@@ -14,9 +14,7 @@ class Result extends Component {
     };
 
     // TODO : Axios request to import result of particular result
-    componentDidMount() {
-        //  axios.get("/result");
-    }
+    componentDidMount() {}
 
     getResult = () => {
         if (this.state.sessionID === "") {
@@ -58,7 +56,7 @@ class Result extends Component {
         let result = [];
         for (let i = 0; i < this.state.result.length; i++) {
             result.push(
-                <Card>
+                <Card key={i}>
                     <CardBody>
                         <CardTitle>{this.state.result[i].user}</CardTitle>
                         <CardText>{this.state.result[i].score}</CardText>

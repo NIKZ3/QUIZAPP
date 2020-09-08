@@ -38,9 +38,15 @@ class AdminLogin extends Component {
                         localStorage.setItem("token", response.data.token);
                         localStorage.setItem("isAdmin", response.data.isAdmin);
                         console.log("SS");
-                        this.setState({ redirect: 1 }, () => {
-                            console.log(this.state.redirect);
-                        });
+                        this.setState(
+                            { redirect: 1 },
+                            () => {
+                                console.log(this.state.redirect);
+                            },
+                            () => {
+                                localStorage.removeItem("state");
+                            }
+                        );
                     } else {
                         alert("login denied");
                     }
