@@ -25,20 +25,21 @@ import AdminLogin from "./views/AdminLogin";
 
 import AdminResult from "./views/AdminResult";
 import SessionActivation from "./views/SessionActivation";
+import Codeeditor from "./views/codeeditor";
 
 var routes = [
-    {
-        path: "/sessionActivation",
-        name: "SessionActivation",
-        icon: "nc-icon nc-preferences-circle-rotate",
-        component: SessionActivation,
-        layout: "/admin",
-    },
     {
         path: "/exam",
         name: "Exam",
         icon: "nc-icon nc-preferences-circle-rotate",
         component: Exam,
+        layout: "/admin",
+    },
+    {
+        path: "/editor",
+        name: "editor",
+        icon: "nc-icon nc-preferences-circle-rotate",
+        component: Codeeditor,
         layout: "/admin",
     },
     {
