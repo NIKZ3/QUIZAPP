@@ -65,7 +65,7 @@ class Sidebar extends React.Component {
                         </div>
                     </a>
                     <a href="/#" className="simple-text logo-normal">
-                        Quiz Master
+                        QUODE
                     </a>
                 </div>
                 <div className="sidebar-wrapper" ref={this.sidebar}>

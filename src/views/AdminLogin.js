@@ -8,6 +8,7 @@ class AdminLogin extends Component {
         email: "",
         password: "",
         redirect: 0,
+        testType: 0,
     };
 
     emailChangeHandler = (event) => {
@@ -38,8 +39,9 @@ class AdminLogin extends Component {
                         localStorage.setItem("token", response.data.token);
                         localStorage.setItem("isAdmin", response.data.isAdmin);
                         console.log("SS");
+                        const testType1 = response.data.testType;
                         this.setState(
-                            { redirect: 1 },
+                            { redirect: 1, testType: response.data.testType },
                             () => {
                                 console.log(this.state.redirect);
                             },
@@ -63,10 +65,20 @@ class AdminLogin extends Component {
 
     render() {
         let isAdmin = localStorage.getItem("isAdmin");
-        if (this.state.redirect === 1 && isAdmin === "false") {
-            return <Redirect from="admin/login" to="/admin/exam" />;
-        } else if (this.state.redirect == 1 && isAdmin == "true") {
+        if (this.state.redirect === 1 && isAdmin === "true") {
             return <Redirect to="/admin/schedule" />;
+        } else if (
+            this.state.redirect == 1 &&
+            isAdmin == "false" &&
+            this.state.testType == "quiz"
+        ) {
+            return <Redirect from="admin/login" to="/admin/exam" />;
+        } else if (
+            this.state.redirect == 1 &&
+            isAdmin == "false" &&
+            this.state.testType == "code"
+        ) {
+            return <Redirect from="admin/login" to="/admin/editor" />;
         } else {
             return (
                 <div className="content" style={{ margin: "75px" }}>

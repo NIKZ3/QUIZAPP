@@ -65,7 +65,7 @@ var routes = [
     },
 
     {
-        path: "/admin/schedule",
+        path: "/schedule",
         name: "adminschedule",
         icon: "nc-icon nc-preferences-circle-rotate",
         component: AdminTestSchedule,

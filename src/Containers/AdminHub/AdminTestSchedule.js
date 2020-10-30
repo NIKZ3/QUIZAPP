@@ -14,6 +14,7 @@ class AdminTestSchedule extends Component {
         time: {},
         date: {},
         file: null,
+        testType: 0,
     };
 
     TimeOnChangeHandler = (event) => {
@@ -46,18 +47,42 @@ class AdminTestSchedule extends Component {
         const data = new FormData();
         console.log(this.state.file);
         data.append("excelFile", this.state.file);
-        axios
-            .post("http://localhost:3001/createSession", data, {
-                headers: {
-                    authorization: localStorage.getItem("token"),
-                },
-            })
-            .then((response) => {
-                console.log("success");
-            })
-            .catch((e) => {
-                console.log(e);
-            });
+        if (this.state.testType == "0") {
+            axios
+                .post("http://localhost:3001/createSession", data, {
+                    headers: {
+                        authorization: localStorage.getItem("token"),
+                    },
+                })
+                .then((response) => {
+                    console.log(response);
+                })
+                .catch((e) => {
+                    console.log(e);
+                    const statusCode = e.response.status;
+                    const err = e.response.data;
+                    if (err != undefined && err != null) {
+                        alert(err);
+                        if (statusCode == 401) {
+                            // localStorage.clear();
+                            // this.props.history.replace("login");
+                        }
+                    }
+                });
+        } else if (this.state.testType == "1") {
+            axios
+                .post("http://localhost:3001/createCodeSession", data, {
+                    headers: {
+                        authorization: localStorage.getItem("token"),
+                    },
+                })
+                .then((response) => {
+                    console.log("success");
+                })
+                .catch((e) => {
+                    console.log(e);
+                });
+        }
     };
 
     FileUploadHandler = (event) => {
@@ -78,12 +103,49 @@ class AdminTestSchedule extends Component {
         // let reader = new FileReader()
     };
 
+    testTypeHandler = (event) => {
+        this.setState({ testType: event.target.value }, () => {
+            console.log(this.state);
+        });
+    };
+
     render() {
         return (
             <Card style={{ margin: "20px", padding: "2px" }}>
                 <CardHeader>Schedule Test</CardHeader>
                 <CardBody>
                     <form>
+                        <FormGroup>
+                            <Label className="form-check-label">
+                                <Input
+                                    type="radio"
+                                    name="type"
+                                    id="1"
+                                    value="0"
+                                    onChange={(event) =>
+                                        this.testTypeHandler(event)
+                                    }
+                                    defaultChecked
+                                />
+                                QUIZ
+                                <span className="form-check-sign"></span>
+                            </Label>
+                        </FormGroup>
+                        <FormGroup>
+                            <Label className="form-check-label">
+                                <Input
+                                    type="radio"
+                                    name="type"
+                                    id="2"
+                                    value="1"
+                                    onChange={(event) =>
+                                        this.testTypeHandler(event)
+                                    }
+                                />
+                                CODE
+                                <span className="form-check-sign"></span>
+                            </Label>
+                        </FormGroup>
                         <FormGroup>
                             <Label for="time">Enter Test Time</Label>
                             <Input
