@@ -10,7 +10,6 @@ class McqCard extends React.Component {
     updateQuestion() {
         this.options = [];
         this.props.question.options.forEach((opt) => {
-            console.log(opt.id, this.props.selectedOption);
             this.options.push(
                 <div className="form-check-radio" key={opt.id}>
                     <Label

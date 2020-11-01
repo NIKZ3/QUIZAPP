@@ -26,8 +26,23 @@ import AdminLogin from "./views/AdminLogin";
 import AdminResult from "./views/AdminResult";
 import SessionActivation from "./views/SessionActivation";
 import Codeeditor from "./views/codeeditor";
+import userActivation from "./views/userActivation";
 
 var routes = [
+    {
+        path: "/userActivation",
+        name: "userActivation",
+        icon: "nc-icon nc-preferences-circle-rotate",
+        component: userActivation,
+        layout: "/admin",
+    },
+    {
+        path: "/sessionActivation",
+        name: "sessionActivation",
+        icon: "nc-icon nc-preferences-circle-rotate",
+        component: SessionActivation,
+        layout: "/admin",
+    },
     {
         path: "/exam",
         name: "Exam",

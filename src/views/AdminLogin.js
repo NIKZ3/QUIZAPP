@@ -62,6 +62,41 @@ class AdminLogin extends Component {
         }
     };
 
+    onSubmitHandlerAdmin = () => {
+        if (this.state.email === "" || this.state.password === "") {
+            alert("ENTER EMAIL AND PASSWORD");
+        } else {
+            axios
+                .post("http://localhost:3001/admin/login", {
+                    emailID: this.state.email,
+                    password: this.state.password,
+                })
+                .then((response) => {
+                    if (response.data.token !== undefined) {
+                        localStorage.setItem("token", response.data.token);
+                        localStorage.setItem("isAdmin", response.data.isAdmin);
+
+                        //  const testType1 = response.data.testType;
+                        this.setState(
+                            {
+                                redirect: 1,
+                            },
+
+                            () => {
+                                localStorage.removeItem("state");
+                            }
+                        );
+                    } else {
+                        alert("login denied");
+                    }
+                })
+                .catch((e) => {
+                    console.log(e);
+                    alert("Something went wrong");
+                });
+        }
+    };
+
     /*redirectState;
     componentDidUpdate() {}*/
 
@@ -95,6 +130,7 @@ class AdminLogin extends Component {
                     <Login
                         name="ADMIN LOGIN"
                         onSubmitHandler={this.onSubmitHandler}
+                        onSubmitHandlerAdmin={this.onSubmitHandlerAdmin}
                         emailChangeHandler={(event) =>
                             this.emailChangeHandler(event)
                         }

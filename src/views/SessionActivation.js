@@ -16,7 +16,6 @@ class SessionActivation extends Component {
     sessionData = [];
 
     activateHandler = (i) => {
-        console.log(this.state.SessionID[i]);
         axios
             .post(
                 "http://localhost:3001/sessionActivation",
