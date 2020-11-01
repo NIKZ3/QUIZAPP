@@ -78,37 +78,35 @@ class Codeeditor extends React.Component {
             alert("You are not authorized");
             this.props.history.replace("/login");
         } else {
-            this.setState(this.props.location.state, () => {
-                axios
-                    .get("http://localhost:3001/getQuestion", {
-                        headers: {
-                            authorization: localStorage.getItem("token"),
-                        },
-                    })
-                    .then((response) => {
-                        if (response.data.userState != "N") {
-                            const userState = JSON.parse(
-                                response.data.userState
-                            );
-                            this.setState({
-                                question: response.data.question.q,
-                                time: userState.time,
-                                code: userState.code,
-                                output: userState.output,
-                            });
-                            alert("Start the Test");
-                        } else {
-                            this.setState({
-                                question: response.data.question.q,
-                            });
-                            alert("Start the Test");
-                        }
-                    })
-                    .catch((e) => {
-                        console.log(e);
-                        alert("Question Fetch Failed");
-                    });
-            });
+            // this.setState(this.props.location.state, () => {
+            axios
+                .get("http://localhost:3001/getQuestion", {
+                    headers: {
+                        authorization: localStorage.getItem("token"),
+                    },
+                })
+                .then((response) => {
+                    if (response.data.userState != "N") {
+                        const userState = JSON.parse(response.data.userState);
+                        this.setState({
+                            question: response.data.question.q,
+                            time: userState.time,
+                            code: userState.code,
+                            output: userState.output,
+                        });
+                        alert("Start the Test");
+                    } else {
+                        this.setState({
+                            question: response.data.question.q,
+                        });
+                        alert("Start the Test");
+                    }
+                })
+                .catch((e) => {
+                    console.log(e);
+                    alert("Question Fetch Failed");
+                });
+            // });
         }
     }
     onSubmitHandler = () => {

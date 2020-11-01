@@ -94,16 +94,11 @@ class Exam extends React.Component {
         });
 
         this.timerHandler = setInterval(() => {
-            this.setState(
-                (prevState) => {
-                    return {
-                        time: prevState.time - 1,
-                    };
-                },
-                () => {
-                    localStorage.setItem("state", JSON.stringify(this.state));
-                }
-            );
+            this.setState((prevState) => {
+                return {
+                    time: prevState.time - 1,
+                };
+            });
         }, 1000);
 
         this.handleOptions = this.handleOptions.bind(this);
@@ -119,10 +114,8 @@ class Exam extends React.Component {
         let optId = event.target.value;
         let options = this.state.answers;
         options[_id] = optId;
-        console.log();
-        this.setState({ answers: options }, () => {
-            localStorage.setItem("state", JSON.stringify(this.state));
-        });
+        // console.log();
+        this.setState({ answers: options });
     }
     handleButtonClick(itr) {
         this.setState((prevState) => {
@@ -181,20 +174,14 @@ class Exam extends React.Component {
 
     //
     componentDidMount() {
-        // console.log(this.props);
-        if (localStorage.getItem("state") !== null) {
-            //When user refreshes if he already has questions no need for backend request
-            this.functionSetInitialState(
-                JSON.parse(localStorage.getItem("state"))
-            );
-        } else {
-            axios
-                .get("http://localhost:3001/user/questions", {
-                    headers: {
-                        authorization: localStorage.getItem("token"),
-                    },
-                })
-                .then((response) => {
+        axios
+            .get("http://localhost:3001/user/questions", {
+                headers: {
+                    authorization: localStorage.getItem("token"),
+                },
+            })
+            .then((response) => {
+                if (response.data.userState == "N") {
                     const data = response.data;
                     alert("Please note down the sessionID:" + data.sessionID); //!SessionID
                     const tempState = {};
@@ -210,12 +197,7 @@ class Exam extends React.Component {
                     }
 
                     this.setState(tempState, () => {
-                        localStorage.setItem(
-                            "state",
-                            JSON.stringify(this.state)
-                        );
-
-                        console.log("This is initial request");
+                        console.log(this.state);
 
                         for (let i = 1; i <= this.state.nQuestions; i++) {
                             this.questionButtons.push(
@@ -230,15 +212,68 @@ class Exam extends React.Component {
                             );
                         }
                     });
-                })
-                .catch((e) => {
-                    alert("You might not be logged in");
-                    this.props.history.replace("/login");
-                });
-        }
+                } else {
+                    console.log("IN");
+                    const data = response.data;
+                    alert("Please note down the sessionID:" + data.sessionID); //!SessionID
+                    const tempState = {};
+                    tempState.questions = data.questions;
+                    tempState.nQuestions = data.nQuestions;
+                    console.log(data.userState);
+                    const userState = JSON.parse(data.userState);
+                    tempState.qCount = userState.qCount;
+                    tempState.time = userState.time;
+                    tempState.answers = userState.answers;
+
+                    this.setState(tempState, () => {
+                        for (let i = 1; i <= this.state.nQuestions; i++) {
+                            this.questionButtons.push(
+                                <Button
+                                    className="mr-1 bg-primary"
+                                    onClick={(e) => {
+                                        this.changeQCount(i);
+                                    }}
+                                >
+                                    {i}
+                                </Button>
+                            );
+                        }
+                    });
+                }
+            })
+            .catch((e) => {
+                console.log(e);
+                alert("You might not be logged in");
+                this.props.history.replace("/login");
+            });
     }
 
     componentDidUpdate() {
+        const userState = Object.assign({}, this.state);
+        delete userState.questions;
+        if (this.state.time % 5 == 0) {
+            axios
+                .post(
+                    "http://localhost:3001/stateSave",
+                    { state: userState },
+                    {
+                        headers: {
+                            authorization: localStorage.getItem("token"),
+                        },
+                    }
+                )
+                .then((response) => {
+                    if (response.data == "cheat") {
+                        this.setState({ time: -1 });
+                        clearInterval(this.timerHandler);
+                        this.onSubmitHandler();
+                    }
+                })
+                .catch((e) => {
+                    console.log(e);
+                });
+        }
+
         if (this.state.time === 0) {
             this.setState({ time: -1 });
             clearInterval(this.timerHandler);
@@ -280,7 +315,7 @@ class Exam extends React.Component {
                         question={this.state.questions[this.state.qCount - 1]}
                         _id={this.state.questions[this.state.qCount - 1]._id}
                         sequence={this.state.qCount - 1}
-                        selectedOption={this.state.answers[_id]}
+                        selectedOption={parseInt(this.state.answers[_id])} //When state returned from database everything gets converted to string
                         handleOptions={this.handleOptions}
                     />
                     <div style={{ float: "right" }}>
