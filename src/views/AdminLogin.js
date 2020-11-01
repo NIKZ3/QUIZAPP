@@ -9,6 +9,7 @@ class AdminLogin extends Component {
         password: "",
         redirect: 0,
         testType: 0,
+        userState: "",
     };
 
     emailChangeHandler = (event) => {
@@ -34,17 +35,18 @@ class AdminLogin extends Component {
                     password: this.state.password,
                 })
                 .then((response) => {
-                    console.log(response);
                     if (response.data.token !== undefined) {
                         localStorage.setItem("token", response.data.token);
                         localStorage.setItem("isAdmin", response.data.isAdmin);
-                        console.log("SS");
+
                         const testType1 = response.data.testType;
                         this.setState(
-                            { redirect: 1, testType: response.data.testType },
-                            () => {
-                                console.log(this.state.redirect);
+                            {
+                                redirect: 1,
+                                testType: response.data.testType,
+                                userState: response.data.state,
                             },
+
                             () => {
                                 localStorage.removeItem("state");
                             }
@@ -65,6 +67,7 @@ class AdminLogin extends Component {
 
     render() {
         let isAdmin = localStorage.getItem("isAdmin");
+
         if (this.state.redirect === 1 && isAdmin === "true") {
             return <Redirect to="/admin/schedule" />;
         } else if (
@@ -78,7 +81,14 @@ class AdminLogin extends Component {
             isAdmin == "false" &&
             this.state.testType == "code"
         ) {
-            return <Redirect from="admin/login" to="/admin/editor" />;
+            return (
+                <Redirect
+                    from="admin/login"
+                    to={{
+                        pathname: "/admin/editor",
+                    }}
+                />
+            );
         } else {
             return (
                 <div className="content" style={{ margin: "75px" }}>

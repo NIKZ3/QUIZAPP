@@ -44,31 +44,71 @@ class Codeeditor extends React.Component {
 
             this.onSubmitHandler();
         }
+        if (this.state.time % 5 == 0) {
+            axios
+                .post(
+                    "http://localhost:3001/stateSave",
+                    { state: this.state },
+                    {
+                        headers: {
+                            authorization: localStorage.getItem("token"),
+                        },
+                    }
+                )
+                .then((response) => {
+                    if (response.data == "cheat") {
+                        this.setState({ time: -1 });
+                        clearInterval(this.timerHandler);
+                        this.onSubmitHandler();
+                    }
+                })
+                .catch((e) => {
+                    console.log(e);
+                });
+        }
     }
 
     componentDidMount() {
+        // console.log("OK", this.props.location.state);
+
         let token = localStorage.getItem("token");
         let isAdmin = localStorage.getItem("isAdmin");
-        console.log(isAdmin);
+
         if (token === null || isAdmin == "true" || isAdmin === null) {
             alert("You are not authorized");
             this.props.history.replace("/login");
         } else {
-            axios
-                .get("http://localhost:3001/getQuestion", {
-                    headers: {
-                        authorization: localStorage.getItem("token"),
-                    },
-                })
-                .then((response) => {
-                    this.setState({ question: response.data.question.q });
-                    alert("Start the Test");
-                    console.log(response);
-                })
-                .catch((e) => {
-                    console.log(e);
-                    alert("Question Fetch Failed");
-                });
+            this.setState(this.props.location.state, () => {
+                axios
+                    .get("http://localhost:3001/getQuestion", {
+                        headers: {
+                            authorization: localStorage.getItem("token"),
+                        },
+                    })
+                    .then((response) => {
+                        if (response.data.userState != "N") {
+                            const userState = JSON.parse(
+                                response.data.userState
+                            );
+                            this.setState({
+                                question: response.data.question.q,
+                                time: userState.time,
+                                code: userState.code,
+                                output: userState.output,
+                            });
+                            alert("Start the Test");
+                        } else {
+                            this.setState({
+                                question: response.data.question.q,
+                            });
+                            alert("Start the Test");
+                        }
+                    })
+                    .catch((e) => {
+                        console.log(e);
+                        alert("Question Fetch Failed");
+                    });
+            });
         }
     }
     onSubmitHandler = () => {
@@ -86,10 +126,8 @@ class Codeeditor extends React.Component {
                 alert("Submission Success");
                 const data = response.data;
                 const dataString = JSON.stringify(data);
-                this.setState({ output: dataString }, () => {
-                    console.log(this.state);
-                });
-                console.log(response);
+                this.setState({ output: dataString });
+
                 if (this.state.time === -1) {
                     alert("Time UP");
                     localStorage.clear();
