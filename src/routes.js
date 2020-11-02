@@ -28,15 +28,9 @@ import SessionActivation from "./views/SessionActivation";
 import Codeeditor from "./views/codeeditor";
 import userActivation from "./views/userActivation";
 import Logout from "./views/Logout";
+import RegisterAdmin from "./views/RegisterAdmin";
 
 var routes = [
-    {
-        path: "/Logout",
-        name: "Logout",
-        icon: "nc-icon nc-preferences-circle-rotate",
-        component: Logout,
-        layout: "/admin",
-    },
     {
         path: "/userActivation",
         name: "userActivation",
@@ -92,6 +86,20 @@ var routes = [
         name: "adminschedule",
         icon: "nc-icon nc-preferences-circle-rotate",
         component: AdminTestSchedule,
+        layout: "/admin",
+    },
+    {
+        path: "/Logout",
+        name: "Logout",
+        icon: "nc-icon nc-preferences-circle-rotate",
+        component: Logout,
+        layout: "/admin",
+    },
+    {
+        path: "/addAdmin",
+        name: "ADD ADMIN",
+        icon: "nc-icon nc-preferences-circle-rotate",
+        component: RegisterAdmin,
         layout: "/admin",
     },
 ];
