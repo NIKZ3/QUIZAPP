@@ -18,35 +18,16 @@ class AdminTestSchedule extends Component {
     };
 
     TimeOnChangeHandler = (event) => {
-        let splitTime = event.target.value.split(":");
-        let time = {};
-        time["hrs"] = splitTime[0];
-        time["min"] = splitTime[1];
-
-        this.setState({ time: time });
-    };
-
-    DateOnChangeHandler = (event) => {
-        let splitDate = event.target.value.split("-");
-        let date = {};
-        date["year"] = splitDate[0];
-        date["month"] = splitDate[1];
-        date["date"] = splitDate[2];
-
-        this.setState({ date: date });
+        this.setState({ time: event.target.value });
     };
 
     scheduleHandler = () => {
-        /*if (
-            this.state.time.hrs === undefined ||
-            this.state.date.year === undefined
-        ) {
-            alert("Please insert Date and Time");
-        }*/
         //TODO:- Else Post to server
         const data = new FormData();
         console.log(this.state.file);
         data.append("excelFile", this.state.file);
+        data.append("time", this.state.time);
+        console.log(data);
         if (this.state.testType == "0") {
             axios
                 .post("http://localhost:3001/createSession", data, {
@@ -86,7 +67,6 @@ class AdminTestSchedule extends Component {
     };
 
     FileUploadHandler = (event) => {
-        console.log("YOO");
         let file = event.target.files[0];
         let ext = "";
         if (file !== undefined) ext = file.name.split(".");
@@ -147,9 +127,9 @@ class AdminTestSchedule extends Component {
                             </Label>
                         </FormGroup>
                         <FormGroup>
-                            <Label for="time">Enter Test Time</Label>
+                            <Label for="time">Enter Test Time in Seconds</Label>
                             <Input
-                                type="time"
+                                type="number"
                                 name="time"
                                 id="time"
                                 placeholder="Enter Time"
@@ -158,18 +138,7 @@ class AdminTestSchedule extends Component {
                                 }
                             />
                         </FormGroup>
-                        <FormGroup>
-                            <Label for="date">Enter Date</Label>
-                            <Input
-                                type="date"
-                                name="date"
-                                id="date"
-                                placeholder="DATE"
-                                onChange={(event) =>
-                                    this.DateOnChangeHandler(event)
-                                }
-                            />
-                        </FormGroup>
+
                         <FormGroup>
                             <Label for="file">Upload File</Label>
                             <Input

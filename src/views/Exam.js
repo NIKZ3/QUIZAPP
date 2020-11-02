@@ -188,7 +188,7 @@ class Exam extends React.Component {
                     tempState.questions = data.questions;
                     tempState.nQuestions = data.nQuestions;
                     tempState.qCount = 1;
-                    tempState.time = 50;
+                    tempState.time = parseInt(response.data.time);
                     tempState.answers = {};
 
                     for (let i = 0; i < tempState.nQuestions; i++) {
@@ -213,7 +213,6 @@ class Exam extends React.Component {
                         }
                     });
                 } else {
-                    console.log("IN");
                     const data = response.data;
                     alert("Please note down the sessionID:" + data.sessionID); //!SessionID
                     const tempState = {};

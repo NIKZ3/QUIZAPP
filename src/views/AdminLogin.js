@@ -24,6 +24,13 @@ class AdminLogin extends Component {
         console.log("works");
     };
 
+    componentDidMount() {
+        const token = localStorage.getItem("token");
+        if (token != null && token != undefined) {
+            this.setState({ redirect: 1 });
+        }
+    }
+
     //TODO:- Route to question page or route to admin page
     onSubmitHandler = () => {
         if (this.state.email === "" || this.state.password === "") {

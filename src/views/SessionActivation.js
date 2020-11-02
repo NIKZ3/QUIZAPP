@@ -34,6 +34,27 @@ class SessionActivation extends Component {
             });
     };
 
+    deActivateHandler = (i) => {
+        console.log(this.state.SessionID[i]);
+        axios
+            .post(
+                "http://localhost:3001/sessionDeactivation",
+                { SessionID: this.state.SessionID[i] },
+                {
+                    headers: {
+                        authorization: localStorage.getItem("token"),
+                    },
+                }
+            )
+            .then((response) => {
+                console.log(response);
+                alert("successful Deactivation");
+            })
+            .catch((e) => {
+                alert("Error");
+            });
+    };
+
     componentDidMount() {
         axios
             .get("http://localhost:3001/getMySessions", {
@@ -54,7 +75,7 @@ class SessionActivation extends Component {
     render() {
         for (let i in this.state.SessionID) {
             this.sessionData.push(
-                <Card>
+                <Card key={this.state.SessionID[i]}>
                     <CardBody>
                         <CardTitle style={{ fontSize: 16 }}>
                             SessionID : {this.state.SessionID[i]}
@@ -64,6 +85,12 @@ class SessionActivation extends Component {
                             onClick={() => this.activateHandler(i)}
                         >
                             Activate Test
+                        </Button>
+                        <Button
+                            color="primary"
+                            onClick={() => this.deActivateHandler(i)}
+                        >
+                            Deactivate Test
                         </Button>
                     </CardBody>
                 </Card>

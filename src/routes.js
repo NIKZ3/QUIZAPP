@@ -27,8 +27,16 @@ import AdminResult from "./views/AdminResult";
 import SessionActivation from "./views/SessionActivation";
 import Codeeditor from "./views/codeeditor";
 import userActivation from "./views/userActivation";
+import Logout from "./views/Logout";
 
 var routes = [
+    {
+        path: "/Logout",
+        name: "Logout",
+        icon: "nc-icon nc-preferences-circle-rotate",
+        component: Logout,
+        layout: "/admin",
+    },
     {
         path: "/userActivation",
         name: "userActivation",
